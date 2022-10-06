@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- BOOTSTRAP CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Document</title>
+  </head>
+  <body onload="showTime()">
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-sm-2 text-center"></div>
+        <div class="col-sm-8 text-center">CURRENT TIME</div>
+        <div class="col-sm-2 text-center"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-2 text-center"></div>
+        <div class="col-sm-8 text-center" id="currentTime"></div>
+        <div class="col-sm-2 text-center"></div>
+      </div>
+
+      <div class="row m-2">
+        <div class="col-sm-2 text-center"></div>
+        <div class="col-sm-8 text-center">
+          <button class="btn btn-primary" id="alarmBtn">ALARM</button>
+          <button class="btn btn-primary" id="stopwatchBtn">STOPWATCH</button>
+        </div>
+        <div class="col-sm-2 text-center"></div>
+      </div>
+
+      <div class="row" id="timeFunctionalities"></div>
+    </div>
+  </body>
+
+  <script>
+    function showTime() {
+      var realTime = new Date();
+      var hours = realTime.getHours();
+      var minutes = realTime.getMinutes();
+      var seconds = realTime.getSeconds();
+      var fullTime = hours + ":" + minutes + ":" + seconds;
+      document.getElementById("currentTime").innerHTML = fullTime;
+      var timeout = setTimeout(showTime, 500);
+    }
+
+    // Show Alarm Start
+    document.getElementById("alarmBtn").addEventListener("click", showAlarm);
+    function showAlarm() {
+      document.getElementById("timeFunctionalities").innerHTML = `
+        <div class="row mt-2" id="timeFunctionalities">
+        <div class="col-sm-2 text-center"></div>
+        <div class="col-sm-8 text-center alarmSetting">
+            <p>ALARM</p>
+            <label for="">Hour:</label>
+            <input type="number" id="h" size="4" />
+
+            <label for="">Minute:</label>
+            <input type="number" id="m" />
+
+            <label for="">Second:</label>
+            <input type="number" id="s" />
+
+            <button class="btn btn-primary btn-sm" onclick="alarm()">SET ALARM</button>
+            <br>
+        </div>
+        <div class="col-sm-2 text-start">
+            <button onclick="closeFunc()" class="btn btn-danger btn-sm " id="closeBtn">X</button>
+        </div>
+
+    </div>
+
+        `;
+    }
+    // Show Alarm End
+
+    // Show Stopwatch Start
+    document
+      .getElementById("stopwatchBtn")
+      .addEventListener("click", showStopwatch);
+    function showStopwatch() {
+      document.getElementById("timeFunctionalities").innerHTML = `
+        <div class="row mt-2">
+        <div class="col-sm-2 text-center"></div>
+        <div class="col-sm-8 text-center stopwatchSetting">
+          <p>STOPWATCH</p>
+          <button class="btn btn-primary btn-sm" onclick="startStopwatch()">
+            START
+          </button>
+
+          <input type="text" id="sc" placeholder="CLICK START" disabled />
+          <button class="btn btn-warning btn-sm" onclick="pauseStopwatch()">
+            PAUSE
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="clearStopwatch()">
+            CLEAR
+          </button>
+
+          <br />
+        </div>
+        <div class="col-sm-2 text-start">
+            <button onclick="closeFunc()" class="btn btn-danger btn-sm" id="closeBtn">X</button>
+        </div>
+      </div>
+    </div>
+        `;
+    }
+    // Show Stopwatch End
+
+    // close funtionality
+    // document.getElementById("closeBtn").addEventListener("click", closeFunc);
+    function closeFunc() {
+      document.getElementById("timeFunctionalities").innerHTML = "";
+    }
+
+    function alarm() {
+      var hTime = document.getElementById("h").value;
+      var mTime = document.getElementById("m").value;
+      var sTime = document.getElementById("s").value;
+      setTimeout(alarm, 500);
+      if (
+        hTime == new Date().getHours() &&
+        mTime == new Date().getMinutes() &&
+        sTime == new Date().getSeconds()
+      ) {
+        alert("Times Up!");
+      }
+    }
+
+    // stopwatch start
+    var stpHours = new Date();
+    stpHours.setHours(0, 0, 0, 0);
+    var trackSeconds = stpHours.getSeconds();
+    var trackMinutes = stpHours.getMinutes();
+    var trackHours = stpHours.getHours();
+    let timer = 0;
+    let timeout;
+
+    function timess() {
+      if (trackSeconds < 10) {
+        trackSeconds = "0" + trackSeconds;
+      }
+
+      document.getElementById("sc").value =
+        trackHours + ":" + trackMinutes + ":" + trackSeconds;
+      trackSeconds++;
+
+      if (trackSeconds == 60) {
+        trackMinutes++;
+        if (trackMinutes < 10) {
+          trackMinutes = "0" + trackMinutes;
+        }
+        trackSeconds = 0;
+      }
+
+      if (trackMinutes == 60) {
+        trackHours++;
+        if (trackHours < 10) {
+          trackHours = "0" + trackHours;
+        }
+        trackMinutes = 0;
+      }
+      timeout = setTimeout(timess, 1000);
+    }
+
+    function startStopwatch() {
+      if (!timer) {
+        timer = 1;
+        timess();
+      }
+    }
+
+    function pauseStopwatch() {
+      clearTimeout(timeout);
+      timer = 0;
+    }
+
+    function clearStopwatch() {
+      clearTimeout(timeout);
+      timer = 0;
+      stpHours.setHours(0, 0, 0, 0);
+      trackSeconds = stpHours.getSeconds();
+      trackMinutes = stpHours.getMinutes();
+      trackHours = stpHours.getHours();
+      document.getElementById("sc").value =
+        "0" + trackHours + ":" + "0" + trackMinutes + ":" + "0" + trackSeconds;
+    }
+    // stopwatch stop
+  </script>
+</html>
